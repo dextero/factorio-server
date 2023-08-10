@@ -1,0 +1,6 @@
+[submodule "factorio-docker"]
+	path = factorio-docker
+	url = https://github.com/factoriotools/factorio-docker
+[submodule "graftorio2"]
+	path = graftorio2
+	url = https://github.com/remijouannet/graftorio2

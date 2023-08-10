@@ -1,0 +1,18 @@
+[Unit]
+Description=Factorio server
+#Requires=dockerd.service
+#After=dockerd.service
+
+[Service]
+User=dex
+Group=dex
+WorkingDirectory=/home/dex/factorio-docker/docker
+ExecStart=/usr/bin/docker-compose up
+ExecStop=/usr/bin/docker-compose down
+TimeoutStartSec=0
+Restart=on-failure
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Install]
+WantedBy=default.target
