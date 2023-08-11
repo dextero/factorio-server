@@ -42,6 +42,13 @@ read -p "$(color BOLD)Group to run the server as$(color DEFAULT) [$USER]: " FACT
 [[ "$FACTORIO_USER" ]] || FACTORIO_USER="$USER"
 [[ "$FACTORIO_GROUP" ]] || FACTORIO_GROUP="$GROUP"
 
+echo -n "Check if $FACTORIO_USER can control docker... "
+if ! id -nG "$FACTORIO_USER" | grep docker; then
+    echo "$(color YELLOW)no$(color DEFAULT)"
+    echo "$(color GREEN)Adding $FACTORIO_USER to group docker (may ask for root password)$(color DEFAULT)"
+    sudo gpasswd --add "$FACTORIO_USER" docker
+fi
+
 preprocess() {
     sed -e "s/@@USER@@/$FACTORIO_USER/g" \
         -e "s/@@GROUP@@/$FACTORIO_GROUP/g" \
@@ -77,16 +84,20 @@ fi
 cat <<EOF
 $(color GREEN)All done!$(color DEFAULT)
 
-Restart server:
+To restart server:
 
   sudo systemctl restart factorio-server
+
+To check server logs:
+
+  sudo journalctl -xeu factorio-server
 
 EOF
 if "$WITH_GRAFANA"; then
     cat <<EOF
-Restart Grafana data provider:
+To restart Grafana data provider:
 
   sudo systemctl restart graftorio-exporter
 
 EOF
-
+fi
