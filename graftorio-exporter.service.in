@@ -4,9 +4,9 @@ Description=Factorio Prometheus data exporter
 #After=dockerd.service
 
 [Service]
-User=dex
-Group=dex
-WorkingDirectory=/home/dex/graftorio2
+User=@@USER@@
+Group=@@GROUP@@
+WorkingDirectory=@@SCRIPT_DIR@@/graftorio2
 ExecStart=/usr/bin/docker-compose up
 ExecStop=/usr/bin/docker-compose down
 TimeoutStartSec=0
