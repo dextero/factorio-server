@@ -6,12 +6,12 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 color() {
     case "$1" in
-        RED) echo -n "\[1b;31m" ;;
-        GREEN) echo -n "\[1b;32m" ;;
-        YELLOW) echo -n "\[1b;33m" ;;
-        BLUE) echo -n "\[1b;34m" ;;
-        BOLD) echo -n "\[1b;1m" ;;
-        DEFAULT) echo -n "\[1b;0m" ;;
+        RED) echo -en "\x1b[31m" ;;
+        GREEN) echo -en "\x1b[32m" ;;
+        YELLOW) echo -en "\x1b[33m" ;;
+        BLUE) echo -en "\x1b[34m" ;;
+        BOLD) echo -en "\x1b[1m" ;;
+        DEFAULT) echo -en "\x1b[0m" ;;
     esac
 }
 
@@ -28,8 +28,8 @@ require-command() {
         echo -n "Check for $ARG... "
         if ! which "$ARG" 2>/dev/null; then
             echo "$(color YELLOW)missing$(color DEFAULT)"
-            echo "Installing $ARG (may ask for root password)"
-            sudo apt install -y "$ARG"
+            echo "$(color GREEN)Installing $ARG (may ask for root password)$(color DEFAULT)"
+            sudo apt install "$ARG"
         fi
     done
 }
@@ -45,7 +45,7 @@ read -p "$(color BOLD)Group to run the server as$(color DEFAULT) [$USER]: " FACT
 preprocess() {
     sed -e "s/@@USER@@/$FACTORIO_USER/g" \
         -e "s/@@GROUP@@/$FACTORIO_GROUP/g" \
-        -e "s/@@SCRIPT_DIR@@/$SCRIPT_DIR/g" \
+        -e "s|@@SCRIPT_DIR@@|$SCRIPT_DIR|g" \
         "$1"
 }
 
@@ -58,7 +58,7 @@ echo "* Starting the server (may ask for root password)"
 sudo systemctl start factorio-server
 
 confirm "Set up the data exporter for Grafana?" && WITH_GRAFANA=1 || WITH_GRAFANA=
-if "$WITH_GRAFANA"; then
+if [[ "$WITH_GRAFANA" ]]; then
     echo "* Creating graftorio-exporter.service"
     preprocess "$SCRIPT_DIR/graftorio-exporter.service.in" > "$SCRIPT_DIR/graftorio-exporter.service"
     echo "* Installing systemd service (may ask for root password)"
@@ -89,3 +89,4 @@ Restart Grafana data provider:
   sudo systemctl restart graftorio-exporter
 
 EOF
+
