@@ -93,7 +93,7 @@ To check server logs:
   sudo journalctl -xeu factorio-server
 
 EOF
-if "$WITH_GRAFANA"; then
+if [[ "$WITH_GRAFANA" ]]; then
     cat <<EOF
 To restart Grafana data provider:
 
